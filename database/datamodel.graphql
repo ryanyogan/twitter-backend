@@ -1,6 +1,51 @@
-type Post {
+type Tweet {
   id: ID! @unique
-  isPublished: Boolean! @default(value: false)
-  title: String!
-  text: String!
+  # The text for a tweet.  No more than 280 characters.
+  body: String!
+  # The date the tweet was published.
+  createdAt: DateTime!
+  # The user that published the tweet.
+  postedBy: User
+  # Meta data about the tweet, views, retweets, and likes.
+  stats: Stat
+}
+
+type User {
+  id: ID! @unique
+  # The username of the user.
+  username: String! @unique
+  # The first_name of the user.
+  firstName: String
+  # The last name of the user.
+  lastName: String
+  # The full name of the user.
+  fullName: String!
+  # The email address of the user.
+  email: String! @unique
+  # The password the user has chosen (hashed, not exposed in query)
+  password: String!
+  # The url for the avatar of the user.
+  avatar: String
+  # Tweets from the user
+  tweets: [Tweet!]!
+}
+
+type Stat {
+  id: ID! @unique
+  # The number of views for a tweet.
+  views: Int!
+  # The number of likes for a tweet.
+  likes: Int!
+  # The number of retweets for a tweet.
+  retweets: Int!
+  # The number of responses a tweet has accumulated.
+  responses: Int!
+}
+
+type Notification {
+  id: ID! @unique
+  # The date the notification was created
+  createdAt: DateTime!
+  # The "Type" of the notification
+  type: String!
 }

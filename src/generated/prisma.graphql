@@ -5,11 +5,38 @@
 # Model Types
 #
 
-type Post implements Node {
+type Notification implements Node {
   id: ID!
-  isPublished: Boolean!
-  title: String!
-  text: String!
+  createdAt: DateTime!
+  type: String!
+}
+
+type Stat implements Node {
+  id: ID!
+  views: Int!
+  likes: Int!
+  retweets: Int!
+  responses: Int!
+}
+
+type Tweet implements Node {
+  id: ID!
+  body: String!
+  createdAt: DateTime!
+  postedBy(where: UserWhereInput): User
+  stats(where: StatWhereInput): Stat
+}
+
+type User implements Node {
+  id: ID!
+  username: String!
+  firstName: String
+  lastName: String
+  fullName: String!
+  email: String!
+  password: String!
+  avatar: String
+  tweets(where: TweetWhereInput, orderBy: TweetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tweet!]
 }
 
 
@@ -17,7 +44,19 @@ type Post implements Node {
 # Other Types
 #
 
-type AggregatePost {
+type AggregateNotification {
+  count: Int!
+}
+
+type AggregateStat {
+  count: Int!
+}
+
+type AggregateTweet {
+  count: Int!
+}
+
+type AggregateUser {
   count: Int!
 }
 
@@ -25,15 +64,35 @@ type BatchPayload {
   count: Long!
 }
 
+scalar DateTime
+
 scalar Long
 
 type Mutation {
-  createPost(data: PostCreateInput!): Post!
-  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-  deletePost(where: PostWhereUniqueInput!): Post
-  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
-  updateManyPosts(data: PostUpdateInput!, where: PostWhereInput!): BatchPayload!
-  deleteManyPosts(where: PostWhereInput!): BatchPayload!
+  createTweet(data: TweetCreateInput!): Tweet!
+  createUser(data: UserCreateInput!): User!
+  createStat(data: StatCreateInput!): Stat!
+  createNotification(data: NotificationCreateInput!): Notification!
+  updateTweet(data: TweetUpdateInput!, where: TweetWhereUniqueInput!): Tweet
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateStat(data: StatUpdateInput!, where: StatWhereUniqueInput!): Stat
+  updateNotification(data: NotificationUpdateInput!, where: NotificationWhereUniqueInput!): Notification
+  deleteTweet(where: TweetWhereUniqueInput!): Tweet
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteStat(where: StatWhereUniqueInput!): Stat
+  deleteNotification(where: NotificationWhereUniqueInput!): Notification
+  upsertTweet(where: TweetWhereUniqueInput!, create: TweetCreateInput!, update: TweetUpdateInput!): Tweet!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertStat(where: StatWhereUniqueInput!, create: StatCreateInput!, update: StatUpdateInput!): Stat!
+  upsertNotification(where: NotificationWhereUniqueInput!, create: NotificationCreateInput!, update: NotificationUpdateInput!): Notification!
+  updateManyTweets(data: TweetUpdateInput!, where: TweetWhereInput!): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput!): BatchPayload!
+  updateManyStats(data: StatUpdateInput!, where: StatWhereInput!): BatchPayload!
+  updateManyNotifications(data: NotificationUpdateInput!, where: NotificationWhereInput!): BatchPayload!
+  deleteManyTweets(where: TweetWhereInput!): BatchPayload!
+  deleteManyUsers(where: UserWhereInput!): BatchPayload!
+  deleteManyStats(where: StatWhereInput!): BatchPayload!
+  deleteManyNotifications(where: NotificationWhereInput!): BatchPayload!
 }
 
 enum MutationType {
@@ -46,78 +105,62 @@ interface Node {
   id: ID!
 }
 
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
-}
-
-type PostConnection {
+type NotificationConnection {
   pageInfo: PageInfo!
-  edges: [PostEdge]!
-  aggregate: AggregatePost!
+  edges: [NotificationEdge]!
+  aggregate: AggregateNotification!
 }
 
-input PostCreateInput {
-  isPublished: Boolean
-  title: String!
-  text: String!
+input NotificationCreateInput {
+  type: String!
 }
 
-type PostEdge {
-  node: Post!
+type NotificationEdge {
+  node: Notification!
   cursor: String!
 }
 
-enum PostOrderByInput {
+enum NotificationOrderByInput {
   id_ASC
   id_DESC
-  isPublished_ASC
-  isPublished_DESC
-  title_ASC
-  title_DESC
-  text_ASC
-  text_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  type_ASC
+  type_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
-type PostPreviousValues {
+type NotificationPreviousValues {
   id: ID!
-  isPublished: Boolean!
-  title: String!
-  text: String!
+  createdAt: DateTime!
+  type: String!
 }
 
-type PostSubscriptionPayload {
+type NotificationSubscriptionPayload {
   mutation: MutationType!
-  node: Post
+  node: Notification
   updatedFields: [String!]
-  previousValues: PostPreviousValues
+  previousValues: NotificationPreviousValues
 }
 
-input PostSubscriptionWhereInput {
-  AND: [PostSubscriptionWhereInput!]
-  OR: [PostSubscriptionWhereInput!]
+input NotificationSubscriptionWhereInput {
+  AND: [NotificationSubscriptionWhereInput!]
+  OR: [NotificationSubscriptionWhereInput!]
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: PostWhereInput
+  node: NotificationWhereInput
 }
 
-input PostUpdateInput {
-  isPublished: Boolean
-  title: String
-  text: String
+input NotificationUpdateInput {
+  type: String
 }
 
-input PostWhereInput {
-  AND: [PostWhereInput!]
-  OR: [PostWhereInput!]
+input NotificationWhereInput {
+  AND: [NotificationWhereInput!]
+  OR: [NotificationWhereInput!]
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -132,49 +175,588 @@ input PostWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  isPublished: Boolean
-  isPublished_not: Boolean
-  title: String
-  title_not: String
-  title_in: [String!]
-  title_not_in: [String!]
-  title_lt: String
-  title_lte: String
-  title_gt: String
-  title_gte: String
-  title_contains: String
-  title_not_contains: String
-  title_starts_with: String
-  title_not_starts_with: String
-  title_ends_with: String
-  title_not_ends_with: String
-  text: String
-  text_not: String
-  text_in: [String!]
-  text_not_in: [String!]
-  text_lt: String
-  text_lte: String
-  text_gt: String
-  text_gte: String
-  text_contains: String
-  text_not_contains: String
-  text_starts_with: String
-  text_not_starts_with: String
-  text_ends_with: String
-  text_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  type: String
+  type_not: String
+  type_in: [String!]
+  type_not_in: [String!]
+  type_lt: String
+  type_lte: String
+  type_gt: String
+  type_gte: String
+  type_contains: String
+  type_not_contains: String
+  type_starts_with: String
+  type_not_starts_with: String
+  type_ends_with: String
+  type_not_ends_with: String
 }
 
-input PostWhereUniqueInput {
+input NotificationWhereUniqueInput {
   id: ID
 }
 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
 type Query {
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
-  post(where: PostWhereUniqueInput!): Post
-  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
+  tweets(where: TweetWhereInput, orderBy: TweetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tweet]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  stats(where: StatWhereInput, orderBy: StatOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Stat]!
+  notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification]!
+  tweet(where: TweetWhereUniqueInput!): Tweet
+  user(where: UserWhereUniqueInput!): User
+  stat(where: StatWhereUniqueInput!): Stat
+  notification(where: NotificationWhereUniqueInput!): Notification
+  tweetsConnection(where: TweetWhereInput, orderBy: TweetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TweetConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  statsConnection(where: StatWhereInput, orderBy: StatOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StatConnection!
+  notificationsConnection(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): NotificationConnection!
   node(id: ID!): Node
 }
 
+type StatConnection {
+  pageInfo: PageInfo!
+  edges: [StatEdge]!
+  aggregate: AggregateStat!
+}
+
+input StatCreateInput {
+  views: Int!
+  likes: Int!
+  retweets: Int!
+  responses: Int!
+}
+
+input StatCreateOneInput {
+  create: StatCreateInput
+  connect: StatWhereUniqueInput
+}
+
+type StatEdge {
+  node: Stat!
+  cursor: String!
+}
+
+enum StatOrderByInput {
+  id_ASC
+  id_DESC
+  views_ASC
+  views_DESC
+  likes_ASC
+  likes_DESC
+  retweets_ASC
+  retweets_DESC
+  responses_ASC
+  responses_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type StatPreviousValues {
+  id: ID!
+  views: Int!
+  likes: Int!
+  retweets: Int!
+  responses: Int!
+}
+
+type StatSubscriptionPayload {
+  mutation: MutationType!
+  node: Stat
+  updatedFields: [String!]
+  previousValues: StatPreviousValues
+}
+
+input StatSubscriptionWhereInput {
+  AND: [StatSubscriptionWhereInput!]
+  OR: [StatSubscriptionWhereInput!]
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: StatWhereInput
+}
+
+input StatUpdateInput {
+  views: Int
+  likes: Int
+  retweets: Int
+  responses: Int
+}
+
+input StatUpdateOneInput {
+  create: StatCreateInput
+  connect: StatWhereUniqueInput
+  disconnect: StatWhereUniqueInput
+  delete: StatWhereUniqueInput
+}
+
+input StatWhereInput {
+  AND: [StatWhereInput!]
+  OR: [StatWhereInput!]
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  views: Int
+  views_not: Int
+  views_in: [Int!]
+  views_not_in: [Int!]
+  views_lt: Int
+  views_lte: Int
+  views_gt: Int
+  views_gte: Int
+  likes: Int
+  likes_not: Int
+  likes_in: [Int!]
+  likes_not_in: [Int!]
+  likes_lt: Int
+  likes_lte: Int
+  likes_gt: Int
+  likes_gte: Int
+  retweets: Int
+  retweets_not: Int
+  retweets_in: [Int!]
+  retweets_not_in: [Int!]
+  retweets_lt: Int
+  retweets_lte: Int
+  retweets_gt: Int
+  retweets_gte: Int
+  responses: Int
+  responses_not: Int
+  responses_in: [Int!]
+  responses_not_in: [Int!]
+  responses_lt: Int
+  responses_lte: Int
+  responses_gt: Int
+  responses_gte: Int
+}
+
+input StatWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
-  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
+  tweet(where: TweetSubscriptionWhereInput): TweetSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  stat(where: StatSubscriptionWhereInput): StatSubscriptionPayload
+  notification(where: NotificationSubscriptionWhereInput): NotificationSubscriptionPayload
+}
+
+type TweetConnection {
+  pageInfo: PageInfo!
+  edges: [TweetEdge]!
+  aggregate: AggregateTweet!
+}
+
+input TweetCreateInput {
+  body: String!
+  postedBy: UserCreateOneWithoutTweetsInput
+  stats: StatCreateOneInput
+}
+
+input TweetCreateManyWithoutPostedByInput {
+  create: [TweetCreateWithoutPostedByInput!]
+  connect: [TweetWhereUniqueInput!]
+}
+
+input TweetCreateWithoutPostedByInput {
+  body: String!
+  stats: StatCreateOneInput
+}
+
+type TweetEdge {
+  node: Tweet!
+  cursor: String!
+}
+
+enum TweetOrderByInput {
+  id_ASC
+  id_DESC
+  body_ASC
+  body_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type TweetPreviousValues {
+  id: ID!
+  body: String!
+  createdAt: DateTime!
+}
+
+type TweetSubscriptionPayload {
+  mutation: MutationType!
+  node: Tweet
+  updatedFields: [String!]
+  previousValues: TweetPreviousValues
+}
+
+input TweetSubscriptionWhereInput {
+  AND: [TweetSubscriptionWhereInput!]
+  OR: [TweetSubscriptionWhereInput!]
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TweetWhereInput
+}
+
+input TweetUpdateInput {
+  body: String
+  postedBy: UserUpdateOneWithoutTweetsInput
+  stats: StatUpdateOneInput
+}
+
+input TweetUpdateManyWithoutPostedByInput {
+  create: [TweetCreateWithoutPostedByInput!]
+  connect: [TweetWhereUniqueInput!]
+  disconnect: [TweetWhereUniqueInput!]
+  delete: [TweetWhereUniqueInput!]
+  update: [TweetUpdateWithoutPostedByInput!]
+  upsert: [TweetUpsertWithoutPostedByInput!]
+}
+
+input TweetUpdateWithoutPostedByDataInput {
+  body: String
+  stats: StatUpdateOneInput
+}
+
+input TweetUpdateWithoutPostedByInput {
+  where: TweetWhereUniqueInput!
+  data: TweetUpdateWithoutPostedByDataInput!
+}
+
+input TweetUpsertWithoutPostedByInput {
+  where: TweetWhereUniqueInput!
+  update: TweetUpdateWithoutPostedByDataInput!
+  create: TweetCreateWithoutPostedByInput!
+}
+
+input TweetWhereInput {
+  AND: [TweetWhereInput!]
+  OR: [TweetWhereInput!]
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  postedBy: UserWhereInput
+  stats: StatWhereInput
+}
+
+input TweetWhereUniqueInput {
+  id: ID
+}
+
+type UserConnection {
+  pageInfo: PageInfo!
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  username: String!
+  firstName: String
+  lastName: String
+  fullName: String!
+  email: String!
+  password: String!
+  avatar: String
+  tweets: TweetCreateManyWithoutPostedByInput
+}
+
+input UserCreateOneWithoutTweetsInput {
+  create: UserCreateWithoutTweetsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutTweetsInput {
+  username: String!
+  firstName: String
+  lastName: String
+  fullName: String!
+  email: String!
+  password: String!
+  avatar: String
+}
+
+type UserEdge {
+  node: User!
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  username_ASC
+  username_DESC
+  firstName_ASC
+  firstName_DESC
+  lastName_ASC
+  lastName_DESC
+  fullName_ASC
+  fullName_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  avatar_ASC
+  avatar_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  username: String!
+  firstName: String
+  lastName: String
+  fullName: String!
+  email: String!
+  password: String!
+  avatar: String
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  AND: [UserSubscriptionWhereInput!]
+  OR: [UserSubscriptionWhereInput!]
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateInput {
+  username: String
+  firstName: String
+  lastName: String
+  fullName: String
+  email: String
+  password: String
+  avatar: String
+  tweets: TweetUpdateManyWithoutPostedByInput
+}
+
+input UserUpdateOneWithoutTweetsInput {
+  create: UserCreateWithoutTweetsInput
+  connect: UserWhereUniqueInput
+  disconnect: UserWhereUniqueInput
+  delete: UserWhereUniqueInput
+  update: UserUpdateWithoutTweetsInput
+  upsert: UserUpsertWithoutTweetsInput
+}
+
+input UserUpdateWithoutTweetsDataInput {
+  username: String
+  firstName: String
+  lastName: String
+  fullName: String
+  email: String
+  password: String
+  avatar: String
+}
+
+input UserUpdateWithoutTweetsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutTweetsDataInput!
+}
+
+input UserUpsertWithoutTweetsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutTweetsDataInput!
+  create: UserCreateWithoutTweetsInput!
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  username: String
+  username_not: String
+  username_in: [String!]
+  username_not_in: [String!]
+  username_lt: String
+  username_lte: String
+  username_gt: String
+  username_gte: String
+  username_contains: String
+  username_not_contains: String
+  username_starts_with: String
+  username_not_starts_with: String
+  username_ends_with: String
+  username_not_ends_with: String
+  firstName: String
+  firstName_not: String
+  firstName_in: [String!]
+  firstName_not_in: [String!]
+  firstName_lt: String
+  firstName_lte: String
+  firstName_gt: String
+  firstName_gte: String
+  firstName_contains: String
+  firstName_not_contains: String
+  firstName_starts_with: String
+  firstName_not_starts_with: String
+  firstName_ends_with: String
+  firstName_not_ends_with: String
+  lastName: String
+  lastName_not: String
+  lastName_in: [String!]
+  lastName_not_in: [String!]
+  lastName_lt: String
+  lastName_lte: String
+  lastName_gt: String
+  lastName_gte: String
+  lastName_contains: String
+  lastName_not_contains: String
+  lastName_starts_with: String
+  lastName_not_starts_with: String
+  lastName_ends_with: String
+  lastName_not_ends_with: String
+  fullName: String
+  fullName_not: String
+  fullName_in: [String!]
+  fullName_not_in: [String!]
+  fullName_lt: String
+  fullName_lte: String
+  fullName_gt: String
+  fullName_gte: String
+  fullName_contains: String
+  fullName_not_contains: String
+  fullName_starts_with: String
+  fullName_not_starts_with: String
+  fullName_ends_with: String
+  fullName_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  avatar: String
+  avatar_not: String
+  avatar_in: [String!]
+  avatar_not_in: [String!]
+  avatar_lt: String
+  avatar_lte: String
+  avatar_gt: String
+  avatar_gte: String
+  avatar_contains: String
+  avatar_not_contains: String
+  avatar_starts_with: String
+  avatar_not_starts_with: String
+  avatar_ends_with: String
+  avatar_not_ends_with: String
+  tweets_every: TweetWhereInput
+  tweets_some: TweetWhereInput
+  tweets_none: TweetWhereInput
+}
+
+input UserWhereUniqueInput {
+  id: ID
+  username: String
+  email: String
 }
