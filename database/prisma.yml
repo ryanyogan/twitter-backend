@@ -1,0 +1,18 @@
+# the name for the service (will be part of the service's HTTP endpoint)
+service: twitter-backend
+
+# the cluster and stage the service is deployed to
+stage: dev
+
+# to disable authentication:
+# disableAuth: true
+secret: mysecret123
+
+# the file path pointing to your data model
+datamodel: datamodel.graphql
+
+# uncomment the following two lines to seed your service with initial data
+# seed:
+#   import: seed.graphql
+
+cluster: public-quarkdonkey-995/prisma-us1
