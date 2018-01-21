@@ -1,4 +1,4 @@
-# import Tweet, Notifcation from "./generated/prisma.graphql"
+# import Tweet, Notifcation, Stat from "./generated/prisma.graphql"
 
 type User {
   id: ID!
