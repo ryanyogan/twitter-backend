@@ -5,6 +5,8 @@ type User {
   username: String!
   email: String!
   fullName: String!
+  firstName: String
+  lastName: String
   tweets: [Tweet!]!
 }
 
@@ -19,8 +21,21 @@ type Query {
   notifcations(limit: Int): [Notification!]!
 }
 
+type AuthPayload {
+  token: String!
+  user: User
+}
+
 type Mutation {
   createTweet(body: String!): Tweet
   deleteTweet(id: ID!): Tweet
   markTweetRead(id: ID!): Boolean
+
+  signup(
+    email: String!
+    password: String!
+    username: String!
+    fullName: String!
+  ): AuthPayload
+  login(email: String!, password: String!): AuthPayload
 }
