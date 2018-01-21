@@ -1,3 +1,5 @@
+import { getUserId } from '../utils/index';
+
 const feed = async (parent, { filter, first, skip, orderBy }, ctx) => {
   const where = filter ? { body_contains: filter } : {};
 
@@ -20,4 +22,10 @@ const feed = async (parent, { filter, first, skip, orderBy }, ctx) => {
 const tweet = async (parent, { id }, ctx, info) =>
   await ctx.db.query.tweet({ where: { id } }, info);
 
-export default { feed, tweet };
+const user = async (parent, args, ctx, info) => {
+  const userId = getUserId(ctx);
+
+  return ctx.db.query.user({ where: { id: userId } }, info);
+};
+
+export default { feed, tweet, user };

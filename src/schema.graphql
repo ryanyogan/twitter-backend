@@ -1,4 +1,4 @@
-# import Tweet, Notifcation, Stat from "./generated/prisma.graphql"
+# import Tweet, Notifcation, Stat, User from "./generated/prisma.graphql"
 
 type User {
   id: ID!
@@ -19,6 +19,8 @@ type Query {
   tweet(id: ID!): Tweet!
   feed(filter: String, skip: Int, first: Int, orderBy: TweetOrderByInput): Feed!
   notifcations(limit: Int): [Notification!]!
+
+  user: User!
 }
 
 type AuthPayload {

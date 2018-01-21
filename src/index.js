@@ -4,7 +4,6 @@ import { Prisma } from 'prisma-binding';
 import Query from './resolvers/Query';
 import Feed from './resolvers/Feed';
 import Mutation from './resolvers/Mutation';
-import Stat from './resolvers/Stat';
 
 const resolvers = {
   Query,
